@@ -29,6 +29,37 @@ Parameters:
     Type: String
     Default: 10.0.3.0/24
 
+  WebAppPort:
+    Description: port number of the deployed WepApp
+    Type: Number
+    Default: 80
+
+  WebServerInstanceType:
+    Description: type of EC2 Instances used in lanchConfig
+    Type: String
+    Default: t3.medium
+  
+  EC2InstanceAMI:
+    Description: AMI for instance used in lanchConfig
+    Type: String
+
+  EC2VolumeSize:
+    Description: Volume size of EC2 instances deployed by lanchConfig
+    Type: String
+    Default: 10
+
+  MinSizeWebAppGroup:
+    Description: Min value of number of instances of the webapp
+    Type: String
+    Default: 4
+
+  MaxSizeWebAppGroup:
+    Description: Min value of number of instances of the webapp
+    Type: String
+    Default: 6
+
+
+
 
 
 Resources:
@@ -192,10 +223,6 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable2
       SubnetId: !Ref PrivateSubnet2
 
-
-#instace profile contains the IAM Role name(s) that we want to associate to our auto scaling EC2 Servers
-  
-
   S3Role: 
     Type: AWS::IAM::Role
     Properties: 
@@ -239,13 +266,13 @@ Resources:
       VpcId: !Ref VPC
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
+        FromPort: !Ref WebAppPort
+        ToPort: !Ref WebAppPort
         CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
       - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
+        FromPort: !Ref WebAppPort
+        ToPort: !Ref WebAppPort
         CidrIp: 0.0.0.0/0
 
   WebServerSecGroup:
@@ -255,8 +282,8 @@ Resources:
       VpcId: !Ref VPC
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
+        FromPort: !Ref WebAppPort
+        ToPort: !Ref WebAppPort
         CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
       - IpProtocol: tcp
@@ -277,15 +304,15 @@ Resources:
           cd /var/www/html
           aws s3 cp s3://udagram-datafiles/Udagramproject.zip .
           unzip -o Udagramproject.zip
-      ImageId: ami-003634241a8fcdec0
+      ImageId: !Ref EC2InstanceAMI
       IamInstanceProfile: !Ref RootInstanceProfile      
       SecurityGroups:
       - Ref: WebServerSecGroup
-      InstanceType: t3.medium
+      InstanceType: !Ref WebServerInstanceType
       BlockDeviceMappings:
       - DeviceName: "/dev/sdk"
         Ebs:
-          VolumeSize: '10'
+          VolumeSize: !Ref EC2VolumeSize
 
   WebAppTargetGroup:
       Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -295,7 +322,7 @@ Resources:
           HealthCheckProtocol: HTTP
           HealthCheckTimeoutSeconds: 8
           HealthyThresholdCount: 2
-          Port: 80
+          Port: !Ref WebAppPort
           Protocol: HTTP
           UnhealthyThresholdCount: 5
           VpcId: !Ref VPC
@@ -308,8 +335,8 @@ Resources:
           - !Ref PrivateSubnet2 
           LaunchConfigurationName:
               Ref: WebAppLaunchConfig
-          MinSize: '2'
-          MaxSize: '4'
+          MinSize: !Ref MinSizeWebAppGroup
+          MaxSize: !Ref MaxSizeWebAppGroup
           TargetGroupARNs:
           -   Ref: WebAppTargetGroup
 
@@ -330,7 +357,7 @@ Resources:
                   Ref: WebAppTargetGroup
           LoadBalancerArn:
               Ref: WebAppLB
-          Port: 80
+          Port: !Ref WebAppPort
           Protocol: HTTP
 
   ALBListenerRule:
@@ -353,6 +380,18 @@ Outputs:
     Export:
       Name: !Sub ${EnvironmentName}-VPCID
 
+  WebAppLoadBalancerDNSName:
+    Description: DNS name or Public URL of the Load Balancer
+    Value: !Join [ "", [ 'http://', !GetAtt WebAppLB.DNSName ]]
+    Export:
+        Name: !Sub ${EnvironmentName}-LB-DNSName
+
+  WebAppGroupNameWebApp:
+    Description: Name of Autoscaling Group of WebApp
+    Value: !Ref WebAppGroup
+    Export:
+        Name: !Sub ${EnvironmentName}-Autoscaling-Group
+
   PublicSubnets:
     Description: A list of the public subnets
     Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]]
@@ -365,9 +404,5 @@ Outputs:
     Export:
       Name: !Sub ${EnvironmentName}-PRIV-NETS
 
-  WebAppLoadBalancerDNSName:
-    Description: DNS name or Public URL of the Load Balancer
-    Value: !Join [ "", [ 'http://', !GetAtt WebAppLB.DNSName ]]
-    Export:
-        Name: !Sub ${EnvironmentName}-LB-DNSName
+
 

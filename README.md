@@ -1,7 +1,7 @@
 # **Deploy a High Availability Web-App using CloudFormation**
 ## **Project Introduction**
 Deployng web servers for a highly available web app using CloudFormation. starting with script code that creates and deploys the infrastructure and application for an Instagram-like app from the ground up. You will begin with deploying the networking components followed by servers, security roles and software. 
-> The temporary URL for the Udagram Project : [past url here]()
+> The temporary URL for the Udagram Project : [http://Udagr-WebAp-P6LM11APGCE8-2034452268.us-west-2.elb.amazonaws.com](http://Udagr-WebAp-P6LM11APGCE8-2034452268.us-west-2.elb.amazonaws.com)
 ## **Infrastructure Diagram**
 
 

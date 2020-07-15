@@ -29,6 +29,5 @@ and for destroying the stack , shell script `destroyStack,sh` is used :
 - `createStack.sh` : shell script to create project stack.
 - `updateStack.sh` : shell script to update the project stack.
 - `destroyStack.sh` : shell script to destroy the project stack an delete all associated resources.
+- `WebApp` : It's a folder contains the web application which has deployed.
 
-
-new text

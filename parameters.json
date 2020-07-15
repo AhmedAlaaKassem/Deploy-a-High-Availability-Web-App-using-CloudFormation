@@ -22,5 +22,29 @@
     {
         "ParameterKey": "PrivateSubnetCIDR2",
         "ParameterValue": "10.0.3.0/24"  
+    },
+    {
+        "ParameterKey": "WebAppPort",
+        "ParameterValue": "80"
+    },
+    {
+        "ParameterKey": "WebServerInstanceType",
+        "ParameterValue": "t3.medium"  
+    },
+    {
+        "ParameterKey": "EC2InstanceAMI",
+        "ParameterValue": "ami-003634241a8fcdec0"  
+    },
+    {
+        "ParameterKey": "EC2VolumeSize",
+        "ParameterValue": "10"  
+    },
+    {
+        "ParameterKey": "MinSizeWebAppGroup",
+        "ParameterValue": "4"  
+    },
+    {
+        "ParameterKey": "MaxSizeWebAppGroup",
+        "ParameterValue": "6"  
     }
   ]

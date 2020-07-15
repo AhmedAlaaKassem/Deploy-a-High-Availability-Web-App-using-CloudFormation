@@ -58,10 +58,6 @@ Parameters:
     Type: String
     Default: 6
 
-
-
-
-
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -372,7 +368,6 @@ Resources:
           ListenerArn: !Ref Listener
           Priority: 1
   
-
 Outputs:
   VPC:
     Description: A reference to the created VPC

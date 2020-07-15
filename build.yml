@@ -278,7 +278,6 @@ Resources:
           aws s3 cp s3://udagram-datafiles/Udagramproject.zip .
           unzip -o Udagramproject.zip
       ImageId: ami-003634241a8fcdec0
-      KeyName: test
       IamInstanceProfile: !Ref RootInstanceProfile      
       SecurityGroups:
       - Ref: WebServerSecGroup
